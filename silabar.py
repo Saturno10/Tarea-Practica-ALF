@@ -1,6 +1,6 @@
 import regex
 from unidecode import unidecode
-
+#
 patron_separacion_silabas = r'(?i)((?<R5b>((?P<s1_R5b1>[AEO])(?P<s2_R5b1>H?[ÚÍ]))|((?P<s1_R5b2>[ÚÍ])(?P<s2_R5b2>H?[AEO]))|((?P<s1_R5b3>[AÁ])(?P<s2_R5b3>H?[AÁ]))|((?P<s1_R5b4>[EÉ])(?P<s2_R5b4>H?[EÉ]))|((?P<s1_R5b5>[IÍ])(?P<s2_R5b5>H?[IÍ]))|((?P<s1_R5b6>[OÓ])(?P<s2_R5b6>H?[OÓ]))|((?P<s1_R5b7>[UÚ])(?P<s2_R5b7>H?[UÚ]))|((?P<s1_R5b8>[AEOÁÉÓ])(?P<s2_R5b8>H?[AEO]))|((?P<s1_R5b9>[AEO])(?P<s2_R5b9>H?[AEOÁÉÓ])))|' \
                  r'(?P<R1>(?P<s1_R1>[AEIOUÁÉÍÓÚÜ])(?P<s2_R1>(CH|LL|RR|[BCDFGJKLMNÑPQRSTVWXYZ])[AEIOUÁÉÍÓÚÜY]))|' \
                  r'(?P<R2a>(?P<s1_R2a>[AEIOUÁÉÍÓÚÜ])(?P<s2_R2a>([PCBGF])([RL])[AEIOUÁÉÍÓÚÜ]))|' \
@@ -15,6 +15,7 @@ patron_separacion_silabas = r'(?i)((?<R5b>((?P<s1_R5b1>[AEO])(?P<s2_R5b1>H?[ÚÍ
 
 
 def silabar(match, palabra):
+    palabra_original=palabra
     palabra_silabada=palabra
     while match is not None:
         temp_silaba = ""
@@ -26,32 +27,34 @@ def silabar(match, palabra):
                 s1 = match.group(agrupacion[0])
                 s2 = match.group(agrupacion[1])
                 if s1 and s2:
-                    temp_silaba+=f"{s1}-{s2}"
+                    temp_silaba += f"{s1}-{s2}"
                     break
         elif match.group('R1'):
-            temp_silaba+=f"{match.group('s1_R1')}-{match.group('s2_R1')}"
+            temp_silaba += f"{match.group('s1_R1')}-{match.group('s2_R1')}"
         elif match.group('R2a'):
-            temp_silaba+=f"{match.group('s1_R2a')}-{match.group('s2_R2a')}"
+            temp_silaba += f"{match.group('s1_R2a')}-{match.group('s2_R2a')}"
         elif match.group('R2b'):
-            temp_silaba+=f"{match.group('s1_R2b')}-{match.group('s2_R2b')}"
+            temp_silaba += f"{match.group('s1_R2b')}-{match.group('s2_R2b')}"
         elif match.group('R2c1'):
-            temp_silaba+=f"{match.group('s1_R2c1')}-{match.group('s2_R2c1')}"
+            temp_silaba += f"{match.group('s1_R2c1')}-{match.group('s2_R2c1')}"
         elif match.group('R2c2'):
-            temp_silaba+=f"{match.group('s1_R2c2')}-{match.group('s2_R2c2')}"
+            temp_silaba += f"{match.group('s1_R2c2')}-{match.group('s2_R2c2')}"
         elif match.group('R3a'):
-            temp_silaba+=f"{match.group('s1_R3a')}-{match.group('s2_R3a')}"
+            temp_silaba += f"{match.group('s1_R3a')}-{match.group('s2_R3a')}"
         elif match.group('R3b'):
-            temp_silaba+=f"{match.group('s1_R3b')}-{match.group('s2_R3b')}"
+            temp_silaba += f"{match.group('s1_R3b')}-{match.group('s2_R3b')}"
         elif match.group('R3c'):
-            temp_silaba+=f"{match.group('s1_R3c')}-{match.group('s2_R3c')}"
+            temp_silaba += f"{match.group('s1_R3c')}-{match.group('s2_R3c')}"
         elif match.group('R3d'):
-            temp_silaba+=f"{match.group('s1_R3d')}-{match.group('s2_R3d')}"
+            temp_silaba += f"{match.group('s1_R3d')}-{match.group('s2_R3d')}"
         elif match.group('R4'):
-            temp_silaba+=f"{match.group('s1_R4')}-{match.group('s2_R4')}"
+            temp_silaba += f"{match.group('s1_R4')}-{match.group('s2_R4')}"
 
 
-
-        palabra = palabra.replace(temp_silaba.replace("-","")[:-1],"")
+        if palabra == palabra_original:
+            palabra = palabra.replace(temp_silaba.replace("-","")[:-1],"")
+        else:
+            palabra = palabra.replace(temp_silaba.replace("-", "")[:-2], "")[1:]
         match = regex.search(patron_separacion_silabas, palabra)
         palabra_silabada=palabra_silabada.replace(temp_silaba.replace("-",""),temp_silaba)
 
@@ -59,11 +62,12 @@ def silabar(match, palabra):
     return palabra_silabada
 
 if __name__ == '__main__':
-    palabra = "vivíais"
+    palabra = "postproducción"
     silabas = ""
     match = regex.search(patron_separacion_silabas, palabra)
 
     silabas = silabar(match,palabra)
     print(silabas)
+
 
 
